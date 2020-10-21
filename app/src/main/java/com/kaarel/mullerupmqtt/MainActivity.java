@@ -1,6 +1,8 @@
 package com.kaarel.mullerupmqtt;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -34,7 +36,9 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     private Thread mThread;
     String infoToMQTT="Tühi...Pole uut infot";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         listViewPairedDevice = (ListView) findViewById(R.id.pairedlist);
 
         inputPane = (LinearLayout) findViewById(R.id.inputpane);
+
         button1 = (Button) findViewById(R.id.button1);
         button2 = (Button) findViewById(R.id.button2);
         button3 = (Button) findViewById(R.id.button3);
@@ -100,6 +106,34 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         button22 = (Button) findViewById(R.id.button22);
         button23 = (Button) findViewById(R.id.button23);
         button24 = (Button) findViewById(R.id.button24);
+
+        List<Button> buttons = new ArrayList<>();
+        buttons.add(button1);
+        buttons.add(button2);
+        buttons.add(button3);
+        buttons.add(button4);
+        buttons.add(button5);
+        buttons.add(button6);
+        buttons.add(button7);
+        buttons.add(button8);
+        buttons.add(button9);
+        buttons.add(button10);
+        buttons.add(button11);
+        buttons.add(button12);
+        buttons.add(button13);
+        buttons.add(button14);
+        buttons.add(button15);
+        buttons.add(button16);
+        buttons.add(button17);
+        buttons.add(button18);
+        buttons.add(button19);
+        buttons.add(button20);
+        buttons.add(button21);
+        buttons.add(button22);
+        buttons.add(button23);
+        buttons.add(button24);
+
+        byte[] bytesToSend = new byte[] { (byte)0x46, (byte)0x2A };
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
