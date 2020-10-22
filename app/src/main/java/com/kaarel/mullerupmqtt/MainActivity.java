@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     private Thread mThread;
     String infoToMQTT="Tühi...Pole uut infot";
 
+    int i=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,8 +134,44 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         buttons.add(button23);
         buttons.add(button24);
 
-        byte[] bytesToSend = new byte[] { (byte)0x46, (byte)0x2A };
+        final List<byte[]> bytesForBT = new ArrayList<>();
+        bytesForBT.add(new byte[] {(byte) 0x46}); //Klahv F
+        bytesForBT.add(new byte[] {(byte) 0x2A}); //Klahv *
+        bytesForBT.add(new byte[] {(byte) 0x2B}); //Klahv +
+        bytesForBT.add(new byte[] {(byte) 0x3D}); //Klahv =
+        bytesForBT.add(new byte[] {(byte) 0x25}); //Klahv %
+        bytesForBT.add(new byte[] {(byte) 0x2F}); //Klahv /
+        bytesForBT.add(new byte[] {(byte) 0x2D}); //Klahv -
+        bytesForBT.add(new byte[] {(byte) 0x51}); //Klahv I
+        bytesForBT.add(new byte[] {(byte) 0x37}); //Klahv 7
+        bytesForBT.add(new byte[] {(byte) 0x38}); //Klahv 8
+        bytesForBT.add(new byte[] {(byte) 0x39}); //Klahv 9
+        bytesForBT.add(new byte[] {(byte) 0x41}); //Klahv II
+        bytesForBT.add(new byte[] {(byte) 0x34}); //Klahv 4
+        bytesForBT.add(new byte[] {(byte) 0x35}); //Klahv 5
+        bytesForBT.add(new byte[] {(byte) 0x36}); //Klahv 6
+        bytesForBT.add(new byte[] {(byte) 0x0D}); //Klahv III
+        bytesForBT.add(new byte[] {(byte) 0x31}); //Klahv 1
+        bytesForBT.add(new byte[] {(byte) 0x32}); //Klahv 2
+        bytesForBT.add(new byte[] {(byte) 0x33}); //Klahv 3
+        bytesForBT.add(new byte[] {(byte) 0x57}); //Klahv ^
+        bytesForBT.add(new byte[] {(byte) 0x30}); //Klahv 0
+        bytesForBT.add(new byte[] {(byte) 0x43}); //Klahv Clr
+        bytesForBT.add(new byte[] {(byte) 0x4F}); //Klahv Opc
+        bytesForBT.add(new byte[] {(byte) 0x53}); //Klahv v
 
+        for (i = 0; i < buttons.size(); i++) {
+            buttons.get(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (myThreadConnected != null) {
+                        myThreadConnected.write(bytesForBT.get(i));
+                    }
+                }
+            });
+        }
+
+        /*
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -398,6 +435,8 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                 }
             }
         });
+        */
+
 
         //BLUETOOTHI info:
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH)) {
