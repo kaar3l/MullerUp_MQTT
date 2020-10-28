@@ -2,7 +2,6 @@ package com.kaarel.mullerupmqtt;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -10,7 +9,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.os.SystemClock;
 //import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,7 +22,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -36,9 +33,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -63,15 +58,18 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     private UUID myUUID;
 
     //MQTT Serveri info
-    String MQTT_server="tcp://192.168.0.3:1883";
+    String MQTT_server="tcp://192.168.0.50:1883";
     String MQTT_clientId="MullerUpAndroid";
     String MQTT_topic="mullerup";
     MemoryPersistence persistence = new MemoryPersistence();
 
-    private Thread mThread;
-    String infoToMQTT="Tühi...Pole uut infot";
+    public String receivedBTdata ="text";
 
-    int i=0;
+    private Thread mThread;
+    //String infoToMQTT="Tühi...Pole uut infot";
+
+    //private String infoFromBT;
+    //int i=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         button22 = (Button) findViewById(R.id.button22);
         button23 = (Button) findViewById(R.id.button23);
         button24 = (Button) findViewById(R.id.button24);
-
+/*
         List<Button> buttons = new ArrayList<>();
         buttons.add(button1);
         buttons.add(button2);
@@ -170,8 +168,8 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                 }
             });
         }
+*/
 
-        /*
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -435,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                 }
             }
         });
-        */
+
 
 
         //BLUETOOTHI info:
@@ -448,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         }
 
         //Paneme MQTT tausta saatja käima:
-        startMQTTthread(infoToMQTT);
+        startMQTTthread();
 
         //using the well-known SPP UUID
         myUUID = UUID.fromString(UUID_STRING_WELL_KNOWN_SPP);
@@ -464,17 +462,24 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
 
     }
 
-    public void sendMQTT(String data){
+    //Get BT info from the other class
+    //public void setInfoFromBT(String infoFromBT) {
+    //    this.infoFromBT = infoFromBT;
+    //}
+
+    public void sendMQTT(){
         //MQTT teema
         try {
             MqttClient client = new MqttClient(MQTT_server, MQTT_clientId, persistence);
-            String content = data;
-            int qos = 1;
+
+            String content =receivedBTdata;
+
+            int qos = 0;
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
 
             // establish a connection
-            System.out.println("Connecting to broker: ");
+            System.out.println("Connecting to broker: "+ MQTT_server);
             client.connect(connOpts);
 
             System.out.println("Connected");
@@ -498,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         }
     }
 
-    public void startMQTTthread(final String info) {
+    public void startMQTTthread() {
         mThread =  new Thread(){
             @Override
             public void run(){
@@ -508,7 +513,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                     try {
                         Thread.sleep(3000);
                         System.out.println("excep " + i);
-                        sendMQTT(info);
+                        sendMQTT();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -625,7 +630,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     ThreadConnectBTdevice:
     Background Thread to handle BlueTooth connecting
     */
-    private class ThreadConnectBTdevice extends Thread {
+private class ThreadConnectBTdevice extends Thread {
 
         private final BluetoothDevice bluetoothDevice;
         private BluetoothSocket bluetoothSocket = null;
@@ -709,6 +714,8 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
 
         }
 
+
+
     }
 
     /*
@@ -716,7 +723,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     Background Thread to handle Bluetooth data communication
     after being connected
      */
-    private class ThreadConnected extends Thread {
+private class ThreadConnected extends Thread {
         private final BluetoothSocket connectedBluetoothSocket;
         private final InputStream connectedInputStream;
         private final OutputStream connectedOutputStream;
@@ -747,6 +754,8 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
             int c = 0;
             int k = 0;
 
+            //inal infoSaver infoEdastaja = new infoSaver();
+
             //BLuetoothi pakettide vastuvõtmine ja ekraanile panek
             while (true) {
                 try {
@@ -759,14 +768,12 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
 
                             @Override
                             public void run() {
-                                // textStatus.append(strReceived);
                                 textStatus.setText(strReceived);
-                                infoToMQTT=strReceived;
+                                receivedBTdata =strReceived;
                             }
                         });
                         //Mingit datat ei tule, seega ootame Sleep
                     } else SystemClock.sleep(100);
-
 
                     //Keepalive osa, mis saadab ? mingi aja tagant
                     //hetkel on ajaks 10*100=1000 millisekundit
@@ -782,7 +789,6 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                         k++;
                     }
 
-
                 } catch (IOException e) {
                     e.printStackTrace();
                     final String msgConnectionLost = "Ühendus nurjus: PANE PROGRAMM KINNI\n"
@@ -792,6 +798,9 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                         @Override
                         public void run() {
                             textStatus.setText(msgConnectionLost);
+
+                            //Paneme kinni MQTT brokeri kui BT ühendus katkeb
+                            stopThread(mThread);
                         }
                     });
                 }
@@ -816,11 +825,8 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
                 e.printStackTrace();
             }
         }
-
-
-
-
-
-
 }
+
+
+
 }
