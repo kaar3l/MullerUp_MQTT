@@ -60,10 +60,10 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     //MQTT Serveri info
     String MQTT_server="tcp://192.168.0.50:1883";
     String MQTT_clientId="MullerUpAndroid";
-    String MQTT_topic="mullerup";
+    String MQTT_topic="mullerup/info";
     MemoryPersistence persistence = new MemoryPersistence();
 
-    public String receivedBTdata ="text";
+    public String receivedBTdata ="No Data From BT";
 
     private Thread mThread;
     //String infoToMQTT="Tühi...Pole uut infot";
@@ -505,20 +505,25 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
 
     public void startMQTTthread() {
         mThread =  new Thread(){
-            @Override
+            boolean running=true;
             public void run(){
                 // Perform thread commands...
-                for (int i = 0; i < 1; i--) {
-                    final int value = i;
+                while (running==true){
+                //for (int i = 0; i < 1; i--) {
+                    //final int value = i;
                     try {
                         Thread.sleep(3000);
-                        System.out.println("excep " + i);
+                        //System.out.println("excep " + i);
                         sendMQTT();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }// Call the stopThread() method.
-                stopThread(this);
+                //stopThread(this);
+            }
+
+            public void stopThread(){
+                running=false;
             }
         };// Start the thread.
         mThread.start();}
@@ -526,7 +531,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     {
         if (theThread != null)
         {
-            theThread = null;
+            mThread = null;
         }
     }
 
@@ -586,6 +591,8 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         if (myThreadConnectBTdevice != null) {
             myThreadConnectBTdevice.cancel();
         }
+
+
     }
 
     @Override
