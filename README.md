@@ -6,7 +6,7 @@ The connection between MullerUp robot and the handheld device was with bluetooth
 Then I soldered and programmed an arduino+HC06 bluetooth module to read what the handheld device is sending to the feeder. It seems that the mobile device is sending some keep alive message about every second. The message is "?".
 
 So I captured what the device sends after connecting the device:
-;E??????????
+ ;E??????????
 
 Then I captured all the data that the buttons are sending to the device:
 | Number | Button | ->  | Message | bytes |
@@ -35,3 +35,7 @@ Then I captured all the data that the buttons are sending to the device:
 | 22 | C | -> | C | 0x43 |
 | 23 | Opc | -> | O | 0x4F |
 | 24 | down | -> | S | 0x53 |
+
+ <img src="buttons.jpg" alt="screenshot">
+
+I also added capability to send MQTT message to a MQTT server. The MQTT server info is hardcoded in the code.
