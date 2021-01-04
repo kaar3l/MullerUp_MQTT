@@ -1,14 +1,18 @@
-# Specifications
+# Problem
 MullerUp Cattle feeding robot had interface through HP iPaq device (Windows Mobile 6). Windows mobile was unstable and crashed from time to time. Then also getting new Windows Mobile device was getting harder every year.
 
+# Feeder -> tablet
 The connection between MullerUp robot and the handheld device was with bluetooth. Firstly I tried to "view" what the robot was sending to the handheld device. The robot sends to the device simply raw text through bluetooth. Parsing this text is simple to get the data on the screen. One on the problems was that the connection would stay alive for about 5 seconds and then disconnect.
 
+# Tablet -> Feeder
 Then I soldered and programmed an arduino+HC06 bluetooth module to read what the handheld device is sending to the feeder. It seems that the mobile device is sending some keep alive message about every second. The message is "?".
 
 So I captured what the device sends after connecting the device:
  ;E??????????
 
+# Buttons
 Then I captured all the data that the buttons are sending to the device:
+ <img src="buttons.jpg" alt="screenshot">
 | Number | Button | ->  | Message | bytes |
 | :---:  | :---:  | :-: | :---:   | :---: |
 | 1 | F | -> | F | 0x46 |
@@ -35,7 +39,5 @@ Then I captured all the data that the buttons are sending to the device:
 | 22 | C | -> | C | 0x43 |
 | 23 | Opc | -> | O | 0x4F |
 | 24 | down | -> | S | 0x53 |
-
- <img src="buttons.jpg" alt="screenshot">
 
 I also added capability to send MQTT message to a MQTT server. The MQTT server info is hardcoded in the code.
